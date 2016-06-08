@@ -71,23 +71,7 @@
   <div class="footer-bg">
 
   </div>
-  <?php
-  function listFolderFiles($dir){
-    $ffs = scandir($dir);
-    echo '<ol>';
-    foreach($ffs as $ff){
-        if($ff != '.' && $ff != '..'){
-            echo '<li>'.$ff;
-            if(is_dir($dir.'/'.$ff)) listFolderFiles($dir.'/'.$ff);
-            echo '</li>';
-        }
-    }
-    echo '</ol>';
-}
 
-
-listFolderFiles('Main Dir');
-?>
 </div>
   <div id="copy">(c) Netlight</div>
   <script type="text/javascript" src="http://rawgithub.com/kangax/fabric.js/master/dist/all.js"></script>
