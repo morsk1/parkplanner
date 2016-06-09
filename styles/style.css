@@ -38,25 +38,22 @@ img{
 
 .buttons{
   position: relative;
-  height: 50px;
-z-index: 3;
-width: 100%;
-background: #009ad5;
-
+  z-index: 3;
+  width: 100%;
+  background: #009ad5;
 }
 
 .footer-bg{
     position: absolute;;
     bottom: 0px;
-    height: 200px;
+    height: 212px;
     width: 100%;
     background: #999;
     z-index: 0;
-    border-top: 2px solid black;
 }
 
 .canvas-container {
-    margin: 25 auto;
+    margin: 25;
 }
 
 #canvas-container.over {
@@ -86,4 +83,16 @@ Styles below based on  http://www.html5rocks.com/en/tutorials/dnd/basics/
 
 .high_level_menu_item{
   color: #FFF;
+  background-color: #009ad5;
+}
+
+.high_level_menu_item:hover {
+  color: #cecece;
+}
+
+.hurr{
+  background-color: #F00;
+}
+.top-bar{
+  background-color: #009ad5;
 }

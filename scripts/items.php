@@ -7,9 +7,10 @@ function createButtons($dir){
   $files = 0;
   $dirs = glob($dir."/*", GLOB_ONLYDIR);
   $files = glob($dir."/*");
+  $top_level = explode("/",$dir);
   if(count($dirs) != 0 && $dir != "images"){
     echo '<li>';
-    echo '<a href="#" class="high_level_menu_item">'.$dir.'</a>';
+    echo '<a href="#" class="high_level_menu_item">'.$top_level[count($top_level)-1].'</a>';
     echo '<ul class="menu">';
     $dd = true;
   }
@@ -22,20 +23,21 @@ function createButtons($dir){
         $dirs2 = glob($dir.'/'.$ff.'/*', GLOB_ONLYDIR);
         $sub_list[] = $dir.'/'.$ff;
         if(count($dirs2) == 0 && $dd == false){
-          echo '<li><a href="#" class="high_level_menu_item" onclick="javascript:showDiv(\''.str_replace('/', '_',$dir).'_'.$ff.'\');">'.$dir.'/'.$ff.'</a></li>';
-        }elseif($dir != "images"){
-          echo '<li><a href="#" onclick="javascript:showDiv(\''.str_replace('/', '_',$dir).'_'.$ff.'\');">'.$dir.'/'.$ff.'</a></li>';
+          echo '<li><a href="#" class="high_level_menu_item" onclick="javascript:showDiv(\''.str_replace('/', '_',$dir).'_'.$ff.'\');">'.$ff.'</a></li>';
+        }elseif($dir != "images" && count($dirs2) == 0){
+          echo '<li><a href="#" onclick="javascript:showDiv(\''.str_replace('/', '_',$dir).'_'.$ff.'\');">'.$ff.'</a></li>';
         }
       }
     }
+  }
+
+  foreach ($sub_list as $value) {
+    createButtons($value);
   }
   if(count($dirs) != 0 && $dir != "images"){
     echo '</ul></li>';
   }
   $dirs = 0;
-  foreach ($sub_list as $value) {
-    createButtons($value);
-  }
 }
 
 function listFolderFiles($dir){
@@ -73,11 +75,17 @@ function listFolderFiles($dir){
       listFolderFiles($value);
     }
 }
+echo '<div class="top-bar">';
+echo '<div class="top-bar-left">';
 echo "<ul class='dropdown menu buttons' data-dropdown-menu>";
 createButtons('images');
+echo "</ul>";
+echo '</div>';
+echo '<div class="top-bar-right">';
+echo '<ul class="menu">';
 echo '<li><a href="#" class="high_level_menu_item" onclick="javascript:toggleGridLines();">Toggle grid</a></li>';
 echo '<li><a href="#" class="high_level_menu_item" onclick="javascript:saveImage();">Save image</a></li>';
-echo "</ul>";
+echo '</ul></div>';
 echo "<div id='images'>";
 listFolderFiles('images');
 echo "</div>";

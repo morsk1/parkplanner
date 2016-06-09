@@ -2294,7 +2294,7 @@ select {
   width: 0;
   height: 0;
   border: inset 5px;
-  border-color: #2199e8 transparent transparent;
+  border-color: #FFF transparent transparent;
   border-top-style: solid;
   border-bottom-width: 0;
   right: 5px;
@@ -2492,18 +2492,16 @@ select {
     width: 0;
     height: 0;
     border: inset 5px;
-    border-color: transparent #2199e8 transparent transparent;
-    border-right-style: solid;
-    border-left-width: 0; }
+    border-color: transparent #FFF transparent transparent;
+    border-right-style: solid; }
   .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a::after {
     content: '';
     display: block;
     width: 0;
     height: 0;
     border: inset 5px;
-    border-color: transparent transparent transparent #2199e8;
-    border-left-style: solid;
-    border-right-width: 0; }
+    border-color: transparent transparent transparent #FFF;
+    border-left-style: solid; }
   .is-dropdown-submenu .is-dropdown-submenu {
     margin-top: -1px; }
   .is-dropdown-submenu > li {
@@ -2581,9 +2579,6 @@ select {
   .media-object-section.bottom {
     vertical-align: bottom; }
 
-html,
-body {
-  height: 100%; }
 
 .off-canvas-wrapper {
   width: 100%;
@@ -3394,8 +3389,7 @@ table.hover tr:nth-of-type(even):hover {
         -ms-transform: translateY(-50%);
             transform: translateY(-50%); }
 
-.top-bar {
-  padding: 0.5rem; }
+
   .top-bar::before, .top-bar::after {
     content: ' ';
     display: table; }

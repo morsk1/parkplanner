@@ -6,21 +6,15 @@
 
 </head>
 <body onresize="resizeCanvas()">
-  <div id="savedPicture">
-
-  </div>
   <div class="background">
     <div id="canvas-container">
       <canvas id="canvas"></canvas>
     </div>
   </div>
   <div class="footer">
-  <?php include 'scripts/items.php';?>
-  <div class="footer-bg">
-
+    <?php include 'scripts/items.php';?>
+    <div class="footer-bg"></div>
   </div>
-
-</div>
   <div id="copy">(c) Netlight</div>
   <script type="text/javascript" src="http://rawgithub.com/kangax/fabric.js/master/dist/all.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -30,6 +24,8 @@
   <script src="scripts/vendor/foundation.js"></script>
   <script type="text/javascript" src="scripts/items.js"></script>
   <script type="text/javascript" src="scripts/canvas.js"></script>
+  <script type="text/javascript" src="scripts/fileSaver.js"></script>
+  <script type="text/javascript" src="scripts/blob.js"></script>
   <script type="text/javascript">
   $(document).foundation();
   </script>
