@@ -4,11 +4,13 @@ var canvas = new fabric.Canvas('canvas');
 var grid = 25;
 var gridVisible = true;
 var w,h;
+var ctrlDown = false;
+var copiedObjects = new Array();
 /*
 NOTE: the start and end handlers are events for the <img> elements; the rest are bound to
 the canvas container.
 */
-var src = '../images/terrain/terrainTile3.png';
+var src = '../images/bg.png';
 
 resizeCanvas();
 
@@ -56,7 +58,9 @@ function handleDragLeave(e) {
 
 function handleDrop(e) {
     // this / e.target is current target element.
-
+    if (e.preventDefault) {
+        e.preventDefault(); // Necessary. Allows us to drop.
+    }
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
@@ -102,6 +106,7 @@ function handleDrop(e) {
 
 function handleDragEnd(e) {
     // this/e.target is the source node.
+    e.preventDefault();
     [].forEach.call(images, function (img) {
         img.classList.remove('img_dragging');
     });
@@ -147,11 +152,129 @@ canvas.on("object:rotating", function(rotEvtData) {
     }
   });
 
-  document.addEventListener('keydown', function (e) {
-       if(e.keyCode == 46){
-         canvas.getActiveObject().remove();
-       }
-  }, false);
+document.addEventListener('keydown', function (e) {
+
+  //Copy paste function for canvas objects
+  if (e.keyCode == 17) ctrlDown = true;
+  if(ctrlDown && e.keyCode == 67){
+    copiedObjects = [];
+    var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if(activeGroup){
+      var objectsInGroup = activeGroup.getObjects();
+      canvas.discardActiveGroup();
+      objectsInGroup.forEach(function(object) {
+        copiedObjects.push(object);
+      });
+    }
+    else if (activeObject) {
+      copiedObjects.push(activeObject);
+    }
+  };
+/*
+  activeObject.clone(function(c) {
+     canvas.add(c.set({ left: c.left+5, top: c.top+5}));
+  });
+*/
+
+if(ctrlDown && e.keyCode == 86){
+  if (copiedObjects.length == 1) {
+        copiedObjects[0].clone(function(clone) {
+            pasteOne(clone,0);
+            selectAll(clone);
+        });
+    } else {
+        var group = new fabric.Group();
+        for (var i = 0; i <= (copiedObjects.length - 1); i++) {
+            copiedObjects[i].clone(function(clone) {
+                pasteOne(clone, i);
+                group.addWithUpdate(clone);
+                // Clone is async so wait until all group objects are cloned before selecting
+                if (group.size() == copiedObjects.length) {
+                    group.setCoords();
+                    selectAll(group);
+                }
+            });
+        }
+    }
+
+
+
+
+    /*
+  var group = new fabric.Group();
+  copiedObjects.forEach(function(object){
+    object.clone(function(c) {
+
+       canvas.add(c.set({ left: c.left+100, top: c.top+100,
+         hasBorders: false,
+         hasControls: true,
+         hasRotatingPoint: true,
+         lockScalingX: true,
+         lockScalingY: true,
+         borderColor: 'red',
+         cornerColor: 'red',
+         cornerSize: 7,
+         transparentCorners: false}));
+
+       group.addWithUpdate(c);
+    });
+  });
+  canvas.setActiveGroup(group);
+  */
+}
+
+
+  //Deleting of canvas objects
+  if(e.keyCode == 46){
+     var activeObject = canvas.getActiveObject(),
+     activeGroup = canvas.getActiveGroup();
+     if (activeGroup) {
+       var objectsInGroup = activeGroup.getObjects();
+       canvas.discardActiveGroup();
+       objectsInGroup.forEach(function(object) {
+           canvas.remove(object);
+       });
+     }
+     else if (activeObject) {
+      canvas.remove(activeObject);
+      }
+    }
+}, false);
+
+var pasteOne = function(clone, i) {
+  console.log(i);
+    console.log(clone);
+    clone.left += 100;
+    clone.top += 100;
+    clone.setCoords();
+
+    canvas.add(clone);
+};
+
+// Update the selection
+function selectAll(select) {
+
+    // Clear the selection
+    canvas.deactivateAll();
+    canvas.discardActiveGroup();
+
+    // Handle group vs single object selections
+    if (select.length > 1) {
+        canvas.setActiveGroup(select);
+        select.forEachObject(function(object) {
+            object.set('active', true);
+        });
+    } else {
+        canvas.setActiveObject(select);
+    }
+    // Refresh the canvas
+    canvas.renderAll();
+}
+
+document.addEventListener('keyup', function(e) {
+  if (e.keyCode == 17) ctrlDown = false;
+});
 
   function saveImage(){
     var fileName = prompt("Please enter your park name", "puisto");

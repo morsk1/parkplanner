@@ -18,7 +18,7 @@
   <div id="copy">(c) Netlight</div>
   <script type="text/javascript" src="http://rawgithub.com/kangax/fabric.js/master/dist/all.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.2/fabric.min.js"></script>
   <script src="scripts/vendor/jquery.js"></script>
   <script src="scripts/vendor/what-input.js"></script>
   <script src="scripts/vendor/foundation.js"></script>

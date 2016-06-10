@@ -56,9 +56,7 @@ img{
     margin: 25;
 }
 
-#canvas-container.over {
-    border: 5px dashed cyan;
-}
+
 #images img.img_dragging {
     opacity: 0.4;
 }
