@@ -18,6 +18,8 @@ canvas.setBackgroundColor({source: src, repeat: 'repeat'}, function () {
   canvas.renderAll();
 });
 
+canvas.preserveObjectStacking = false;
+
 function resizeCanvas(){
   removeGridLines();
   w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)-50;
@@ -156,19 +158,27 @@ document.addEventListener('keydown', function (e) {
 
   //Copy paste function for canvas objects
   if (e.keyCode == 17) ctrlDown = true;
-  if(ctrlDown && e.keyCode == 67){
+  if (ctrlDown && e.keyCode == 67) {
+		//reset array with copied objects
     copiedObjects = [];
+
+    //Get the activeObject and the ActiveGroup
     var activeObject = canvas.getActiveObject(),
-    activeGroup = canvas.getActiveGroup();
-    if(activeGroup){
+      activeGroup = canvas.getActiveGroup();
+
+    //If multiple items are selected the activeGroups will be true
+    if (activeGroup) {
+    	//get the objects from the activegroup
       var objectsInGroup = activeGroup.getObjects();
+      //Discard the activeGroup
       canvas.discardActiveGroup();
+
+      //Push all items from the activeGroup into our array
       objectsInGroup.forEach(function(object) {
         copiedObjects.push(object);
       });
-    }
-    else if (activeObject) {
-      copiedObjects.push(activeObject);
+    } else if (activeObject) { //If one item is selected then acriveObject will be true
+      copiedObjects.push(activeObject); //push our selected item into the array
     }
   };
 /*
@@ -177,52 +187,57 @@ document.addEventListener('keydown', function (e) {
   });
 */
 
-if(ctrlDown && e.keyCode == 86){
-  if (copiedObjects.length == 1) {
-        copiedObjects[0].clone(function(clone) {
-            pasteOne(clone,0);
-            selectAll(clone);
+if (ctrlDown && e.keyCode == 86) {
+    var count = 0;
+    //Check if we have only one item we want to copy
+    if (copiedObjects.length == 1) {
+    	//check if we can handle async cloning
+      if (fabric.util.getKlass(copiedObjects[0].type).async) {
+        	copiedObjects[0].clone(function(clone) {
+
+          //Add our item
+          pasteOne(clone);
+
+          //Select our item
+          selectAll(1);
         });
-    } else {
-        var group = new fabric.Group();
-        for (var i = 0; i <= (copiedObjects.length - 1); i++) {
-            copiedObjects[i].clone(function(clone) {
-                pasteOne(clone, i);
-                group.addWithUpdate(clone);
-                // Clone is async so wait until all group objects are cloned before selecting
-                if (group.size() == copiedObjects.length) {
-                    group.setCoords();
-                    selectAll(group);
-                }
-            });
+      } else { //Sync cloning
+
+      	//Add our item
+        pasteOne(copiedObjects[0].clone());
+
+        //Select our item
+        selectAll(1);
+      }
+      //Handle multiple item copying
+    } else if(copiedObjects.length > 1) {
+      for (var index = (copiedObjects.length - 1); index >= 0; index--) {
+      	//check if we can handle async cloning
+        if (fabric.util.getKlass(copiedObjects[index].type).async) {
+        		copiedObjects[index].clone(function(clone) {
+
+            //Add our item
+            pasteOne(clone);
+            count++;
+            //if we have added all our items we can now select them
+            if (count == copiedObjects.length) {
+              selectAll(copiedObjects.length);
+            }
+          });
+        }else{ //sync cloning
+
+        	//Add our item
+        	pasteOne(copiedObjects[index].clone());
+
+          count++;
+          //if we have added all our items we can now select them
+          if (count == copiedObjects.length) {
+            selectAll(copiedObjects.length);
+          }
         }
+      }
     }
-
-
-
-
-    /*
-  var group = new fabric.Group();
-  copiedObjects.forEach(function(object){
-    object.clone(function(c) {
-
-       canvas.add(c.set({ left: c.left+100, top: c.top+100,
-         hasBorders: false,
-         hasControls: true,
-         hasRotatingPoint: true,
-         lockScalingX: true,
-         lockScalingY: true,
-         borderColor: 'red',
-         cornerColor: 'red',
-         cornerSize: 7,
-         transparentCorners: false}));
-
-       group.addWithUpdate(c);
-    });
-  });
-  canvas.setActiveGroup(group);
-  */
-}
+  }
 
 
   //Deleting of canvas objects
@@ -242,34 +257,37 @@ if(ctrlDown && e.keyCode == 86){
     }
 }, false);
 
-var pasteOne = function(clone, i) {
-  console.log(i);
-    console.log(clone);
+var pasteOne = function(clone) {
     clone.left += 100;
     clone.top += 100;
+    //clone.set('canvas', canvas);
     clone.setCoords();
-
     canvas.add(clone);
 };
 
 // Update the selection
-function selectAll(select) {
+function selectAll(numberOfItems) {
 
     // Clear the selection
     canvas.deactivateAll();
     canvas.discardActiveGroup();
 
     // Handle group vs single object selections
-    if (select.length > 1) {
-        canvas.setActiveGroup(select);
-        select.forEachObject(function(object) {
-            object.set('active', true);
-        });
-    } else {
-        canvas.setActiveObject(select);
+    var objs = new Array();
+    var canvasObjects = canvas.getObjects();
+    var count = 0;
+    for(var index = (canvasObjects.length - 1); index >= 0; index--){
+      if(count < numberOfItems)objs.push(canvasObjects[index].set('active',true));
+
+      count++;
     }
-    // Refresh the canvas
-    canvas.renderAll();
+
+    var group = new fabric.Group(objs, {
+      originX: 'center',
+      originY: 'center'
+    });
+
+    canvas.setActiveGroup(group.setCoords()).renderAll();
 }
 
 document.addEventListener('keyup', function(e) {
